@@ -12,6 +12,18 @@ Greener Bake is a team-developed web application focused on sustainable bakery o
 - Administrator and manager interfaces.
 - Authentication and database-backed operational records.
 
+## Screenshots
+
+Screenshots captured from the original frontend pages. The dashboard uses the demonstration values included in the source; no database was connected for this preview.
+
+| Home | Environmental indicators |
+| :---: | :---: |
+| <img src="docs/screenshots/home.jpg" alt="Greener Bake homepage" width="480"> | <img src="docs/screenshots/dashboard.jpg" alt="Material utilization, energy savings and waste recycling demonstration indicators" width="480"> |
+
+| Resource center | Login |
+| :---: | :---: |
+| <img src="docs/screenshots/resource-center.jpg" alt="Sustainable baking resources and white papers" width="480"> | <img src="docs/screenshots/login.jpg" alt="Greener Bake login page" width="480"> |
+
 ## Project structure
 
 - `app.py`: Flask application and routes.
