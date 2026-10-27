@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Resource Center - Greener Bake{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/resource.css') }}">
+{% endblock %}
+
+{% block content %}
+<main>
+    <section class="resource-hero">
+        <div class="container">
+            <h1 data-aos="fade-up">Resource Center</h1>
+            <p data-aos="fade-up" data-aos-delay="100">Explore cutting-edge research and practical experience in green baking,<br>supporting sustainable development in the industry</p>
+        </div>
+    </section>
+
+    <section class="resource-section">
+        <div class="container">
+            <div class="resource-categories">
+                <!-- 白皮书 -->
+                <div class="category" data-aos="fade-up">
+                    <h2>White Papers</h2>
+                    <div class="resource-grid">
+                        <div class="resource-card" data-aos="fade-up">
+                            <div class="resource-icon">
+                                <img src="{{ url_for('static', filename='images/icons/whitepaper.png') }}" alt="White Paper Icon">
+                            </div>
+                            <h3>2024 Sustainable Baking Practice Guide</h3>
+                            <p>In-depth exploration of environmental practices in industrial baking, a comprehensive guide to green transformation from raw material selection to production processes</p>
+                            <a href="{{ url_for('white_paper', paper_id='sustainable-baking') }}" class="read-btn">Read Full Text</a>
+                        </div>
+                        <div class="resource-card">
+                            <div class="resource-icon">
+                                <img src="{{ url_for('static', filename='images/icons/energy.png') }}" alt="Energy Optimization Icon">
+                            </div>
+                            <h3>Baking Energy Efficiency Optimization</h3>
+                            <p>Research report on energy consumption optimization in baking processes</p>
+                            <a href="{{ url_for('white_paper', paper_id='energy-efficiency') }}" class="read-btn">Read Full Text</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 研究报告 -->
+                <div class="category" data-aos="fade-up">
+                    <h2>Research Reports</h2>
+                    <div class="resource-grid">
+                        <div class="resource-card">
+                            <div class="resource-icon">
+                                <img src="{{ url_for('static', filename='images/icons/carbon.png') }}" alt="Carbon Footprint Icon">
+                            </div>
+                            <h3>2023 Carbon Footprint Analysis</h3>
+                            <p>Detailed analysis report on carbon emissions in the baking industry</p>
+                            <a href="{{ url_for('research_report', report_id='carbon-footprint') }}" class="read-btn">View Report</a>
+                        </div>
+                        <div class="resource-card">
+                            <div class="resource-icon">
+                                <img src="{{ url_for('static', filename='images/icons/recycle.png') }}" alt="Waste Recycling Icon">
+                            </div>
+                            <h3>Waste Reduction Research</h3>
+                            <p>Research findings on waste minimization in baking operations</p>
+                            <a href="{{ url_for('research_report', report_id='waste-reduction') }}" class="read-btn">View Report</a>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %} 

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}{{ report.title }} - Greener Bake{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/resource.css') }}">
+{% endblock %}
+
+{% block content %}
+<main class="article-main">
+    <div class="container">
+        <div class="article-header">
+            <a href="{{ url_for('resource_center') }}" class="back-link">← Back to Resource Center</a>
+            <h1>{{ report.title }}</h1>
+            <div class="article-meta">
+                <span>Published Date: {{ report.publish_date }}</span>
+                <span>Author: {{ report.author }}</span>
+            </div>
+        </div>
+
+        <div class="article-content">
+            <div class="introduction">
+                <h2>Abstract</h2>
+                <p>{{ report.content.introduction }}</p>
+            </div>
+
+            {% for section in report.content.sections %}
+            <div class="section">
+                <h2>{{ section.title }}</h2>
+                <p>{{ section.content | nl2br }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</main>
+{% endblock %} 

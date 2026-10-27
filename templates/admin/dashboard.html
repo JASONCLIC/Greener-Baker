@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Console - Greener Bake</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+<body class="admin-body">
+    <div class="admin-container">
+        <!-- 侧边栏 -->
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <h1>Greener Bake</h1>
+                <p>Admin Console</p>
+            </div>
+            <nav class="admin-nav">
+                <ul>
+                    <li><a href="{{ url_for('admin_dashboard') }}" class="active">
+                        <span class="icon">📊</span>Overview
+                    </a></li>
+                    <li><a href="{{ url_for('admin_users') }}">
+                        <span class="icon">👥</span>User Management
+                    </a></li>
+                    <li><a href="{{ url_for('index') }}">
+                        <span class="icon">🏠</span>Back to Home
+                    </a></li>
+                    <li><a href="{{ url_for('logout') }}">
+                        <span class="icon">🚪</span>Logout
+                    </a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- 主要内容区 -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <h2>Welcome back, {{ session.get('username', '') }}</h2>
+                <div class="admin-profile">
+                    <span>{{ session.get('email', '') }}</span>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <div class="dashboard-stats">
+                    <div class="stat-card" data-aos="fade-up">
+                        <h3>Total Users</h3>
+                        <p class="stat-number">{{ total_users }}</p>
+                    </div>
+                    <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
+                        <h3>New Users Today</h3>
+                        <p class="stat-number">{{ new_users_today }}</p>
+                    </div>
+                    <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
+                        <h3>Online Users</h3>
+                        <p class="stat-number">{{ online_users }}</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+    </script>
+</body>
+</html> 

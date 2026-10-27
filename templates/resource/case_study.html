@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}{{ case.title }} - Greener Bake{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/resource.css') }}">
+{% endblock %}
+
+{% block content %}
+<main class="article-main">
+    <div class="container">
+        <div class="article-header">
+            <a href="{{ url_for('resource_center') }}" class="back-link">← Back to Resource Center</a>
+            <h1>{{ case.title }}</h1>
+            <div class="article-meta">
+                <span>Published Date: {{ case.publish_date }}</span>
+                <span>Implementing Company: {{ case.company }}</span>
+            </div>
+        </div>
+
+        <div class="article-content">
+            <div class="introduction">
+                <h2>Case Overview</h2>
+                <p>{{ case.content.introduction }}</p>
+            </div>
+
+            {% for section in case.content.sections %}
+            <div class="section">
+                <h2>{{ section.title }}</h2>
+                <p>{{ section.content | nl2br }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</main>
+{% endblock %} 

@@ -1,0 +1,237 @@
+{% extends "manager/base.html" %}
+
+{% block title %}Energy Consumption Monitoring - Greener Bake{% endblock %}
+
+{% block manager_content %}
+<div class="energy-dashboard">
+    <header class="page-header">
+        <h2>Energy Consumption Monitoring</h2>
+    </header>
+
+    <!-- 实时能耗概览 -->
+    <div class="energy-overview">
+        <div class="stat-card total-consumption">
+            <h3>Total Consumption</h3>
+            <div class="stat-value">{{ total_consumption }} kWh</div>
+            <div class="stat-change {% if consumption_change > 0 %}up{% else %}down{% endif %}">
+                {{ consumption_change }}% vs Yesterday
+            </div>
+        </div>
+        <div class="stat-card active-devices">
+            <h3>Active Devices</h3>
+            <div class="stat-value">{{ active_devices }}/{{ total_devices }}</div>
+        </div>
+        <div class="stat-card alerts">
+            <h3>Alerts</h3>
+            <div class="stat-value">{{ alert_count }}</div>
+        </div>
+    </div>
+
+    <!-- 添加总耗电量图表区域 -->
+    <div class="total-energy-chart-container">
+        <div class="chart-header">
+            <h3>Store Total Energy Consumption Trend</h3>
+            <div class="chart-period-selector">
+                <button class="period-btn active" data-period="day">24 Hours</button>
+                <button class="period-btn" data-period="week">7 Days</button>
+                <button class="period-btn" data-period="month">30 Days</button>
+            </div>
+        </div>
+        <div id="totalEnergyChart" class="total-energy-chart"></div>
+    </div>
+
+    <!-- 设备能耗列表 -->
+    <div class="devices-list">
+        {% for device in devices %}
+        <div class="device-card">
+            <div class="device-header">
+                <h3>{{ device.name }}</h3>
+                <span class="device-status {{ device.status }}" style="font-size: 0.9rem;">
+                    {{ 'Running' if device.status == 'active' else 'Stopped' }}
+                </span>
+            </div>
+            <div class="device-info">
+                <div class="current-power">
+                    <span class="label">Current Power</span>
+                    <span class="value">{{ device.current_power }}W</span>
+                </div>
+                <div class="today-consumption">
+                    <span class="label">Today's Consumption</span>
+                    <span class="value">{{ device.today_consumption }}kWh</span>
+                </div>
+            </div>
+            <div class="device-chart" id="chart-{{ device.id }}"></div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ super() }}
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<script src="{{ url_for('static', filename='js/manager/energy.js') }}"></script>
+{% endblock %}
+
+{% block extra_css %}
+{{ super() }}
+<style>
+    .total-energy-chart-container {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .total-energy-chart {
+        height: 500px;  /* 增加图表高度 */
+        width: 100%;
+        margin-top: 1rem;
+    }
+
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .chart-period-selector {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .period-btn {
+        padding: 0.5rem 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        background: white;
+        color: #4a5568;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+    }
+
+    .period-btn:hover {
+        background: #f7fafc;
+        transform: translateY(-1px);
+    }
+
+    .period-btn.active {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+
+    .devices-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .device-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+    }
+
+    .device-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+
+    .device-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .device-header h3 {
+        font-size: 1.2rem;
+        color: #1a1a1a;
+        margin: 0;
+    }
+
+    .device-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: #f8fafc;
+        border-radius: 8px;
+    }
+
+    .current-power, .today-consumption {
+        text-align: center;
+    }
+
+    .label {
+        display: block;
+        color: #64748b;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .value {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #0f172a;
+    }
+
+    .device-chart {
+        height: 240px;
+        margin-top: 1rem;
+    }
+
+    .device-status {
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+
+    .device-status.active {
+        background-color: #ecfdf5;
+        color: #059669;
+    }
+
+    .device-status.inactive {
+        background-color: #f1f5f9;
+        color: #64748b;
+    }
+
+    .time-range-selector {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .time-btn {
+        padding: 4px 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
+        background: white;
+        color: #4a5568;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 0.85rem;
+    }
+
+    .time-btn:hover {
+        background: #f7fafc;
+        border-color: #cbd5e0;
+    }
+
+    .time-btn.active {
+        background: #3b82f6;
+        color: white;
+        border-color: #3b82f6;
+    }
+</style>
+{% endblock %} 

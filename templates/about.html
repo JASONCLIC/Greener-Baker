@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}关于我们 - Greener Bake{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/about.css') }}">
+{% endblock %}
+
+{% block content %}
+<main>
+    <section class="about-hero">
+        <div class="hero-video">
+            <video autoplay muted loop playsinline>
+                <source src="{{ url_for('static', filename='videos/about-hero.mp4') }}" type="video/mp4">
+            </video>
+            <div class="overlay"></div>
+        </div>
+        <div class="container">
+            <h1 data-aos="fade-up">About Greener Bake</h1>
+            <p data-aos="fade-up" data-aos-delay="100">Leading Sustainable Innovation in Baking</p>
+        </div>
+    </section>
+
+    <section class="mission-section">
+        <div class="container">
+            <div class="mission-content" data-aos="fade-up">
+                <h2>Our Mission</h2>
+                <p>Redefining sustainability standards in the baking industry through innovative technology and eco-friendly practices, delivering healthy and delicious products while minimizing environmental impact.</p>
+                <div class="mission-cards">
+                    <div class="mission-card" data-aos="fade-up" data-aos-delay="100">
+                        <div class="icon">🌱</div>
+                        <h3>Eco-friendly Production</h3>
+                        <p>Using clean energy and monitoring systems to control equipment energy consumption and minimize carbon emissions</p>
+                    </div>
+                    <div class="mission-card" data-aos="fade-up" data-aos-delay="200">
+                        <div class="icon">♻️</div>
+                        <h3>Resource Utilization</h3>
+                        <p>Implementing predictive material systems to optimize purchases and prevent waste</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="achievements-section">
+        <div class="container">
+            <h2 data-aos="fade-up">Our Achievements</h2>
+            <div class="achievements-grid">
+                <div class="achievement-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="achievement-number">40<span>%</span></div>
+                    <h3>Energy Savings</h3>
+                    <p>Real-time equipment monitoring system ensures efficient energy usage</p>
+                </div>
+                <div class="achievement-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="achievement-number">30<span>+</span></div>
+                    <h3>Eco-certified Products</h3>
+                    <p>Internationally certified eco-friendly product lines with strict production controls</p>
+                </div>
+                <div class="achievement-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="achievement-number">70<span>%</span></div>
+                    <h3>Carbon Reduction</h3>
+                    <p>Significant reduction in carbon emissions compared to traditional bakeries</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="innovation-section">
+        <div class="container">
+            <div class="innovation-content">
+                <div class="innovation-text" data-aos="fade-right">
+                    <h2>Innovation Technology</h2>
+                    <p>We invest heavily in technological innovation, using IoT technology to monitor equipment performance in real-time, ensuring production efficiency while reducing energy consumption.</p>
+                    <ul class="innovation-features">
+                        <li>Real-time Equipment Monitoring Platform</li>
+                        <li>AI-Powered Production Optimization</li>
+                        <li>Waste Recycling System</li>
+                    </ul>
+                </div>
+                <div class="innovation-image" data-aos="fade-left">
+                    <img src="{{ url_for('static', filename='images/innovation.jpg') }}" alt="Smart Production System">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="team-section">
+        <div class="container">
+            <h2 data-aos="fade-up">Our Team</h2>
+            <p class="team-intro" data-aos="fade-up">A professional team of industry experts dedicated to promoting sustainable development in the baking industry</p>
+            <div class="team-grid">
+                <div class="team-area" data-aos="fade-up" data-aos-delay="100">
+                    <div class="icon">👨‍🔬</div>
+                    <h3>R&D Team</h3>
+                    <p>Innovating recipes and processes for delicious results</p>
+                </div>
+                <div class="team-area" data-aos="fade-up" data-aos-delay="200">
+                    <div class="icon">👨‍💻</div>
+                    <h3>Tech Team</h3>
+                    <p>Maintaining monitoring systems to balance sustainability and efficiency</p>
+                </div>
+                <div class="team-area" data-aos="fade-up" data-aos-delay="300">
+                    <div class="icon">👨‍🍳</div>
+                    <h3>Operations Team</h3>
+                    <p>Crafting each product with care, delivering eco-friendly delights to every customer</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %} 

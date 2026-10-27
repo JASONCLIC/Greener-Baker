@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sustainability - Greener Bake</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+<body>
+    <header class="main-header">
+        <nav class="nav-container">
+            <div class="logo">
+                <h1>Greener Bake</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('production') }}">Production</a></li>
+                <li><a href="{{ url_for('sustainability') }}" class="active">Sustainability</a></li>
+                <li><a href="{{ url_for('reports') }}">Reports</a></li>
+                <li><a href="{{ url_for('login') }}">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero-section">
+            <div class="hero-content" data-aos="fade-up">
+                <h1>Sustainability Strategy</h1>
+                <p>Building a Green Future with Innovative Technology</p>
+            </div>
+        </section>
+
+        <section class="sustainability-section">
+            <h2 data-aos="fade-up">Sustainability Metrics</h2>
+            <div class="sustainability-grid">
+                <div class="sustainability-card" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="chart-container">
+                        <div class="eco-stats">
+                            <div class="stat-item">
+                                <span>Solar Energy Utilization</span>
+                                <div class="progress-bar" style="width: 75%"></div>
+                                <span class="percentage counter">75%</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Energy-Efficient Equipment Usage</span>
+                                <div class="progress-bar" style="width: 90%"></div>
+                                <span class="percentage counter">90%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sustainability-card" data-aos="zoom-in" data-aos-delay="200">
+                    <h3>Waste Management</h3>
+                    <div class="waste-management">
+                        <div class="waste-item">
+                            <span>Recyclables</span>
+                            <div class="circular-progress">
+                                <span class="counter">85%</span>
+                            </div>
+                        </div>
+                        <div class="waste-item">
+                            <span>Organic Waste</span>
+                            <div class="circular-progress">
+                                <span class="counter">95%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="initiatives-section">
+            <h2 data-aos="fade-up">Environmental Initiatives</h2>
+            <div class="initiatives-grid">
+                <div class="initiative-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="initiative-icon">🌍</div>
+                    <h3>Carbon Neutrality Plan</h3>
+                    <p>Achieve carbon neutrality by 2025</p>
+                    <div class="progress-bar" style="width: 60%"></div>
+                    <span class="progress-text">Progress: 60%</span>
+                </div>
+                <div class="initiative-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="initiative-icon">🌱</div>
+                    <h3>Green Packaging</h3>
+                    <p>100% biodegradable packaging materials</p>
+                    <div class="progress-bar" style="width: 85%"></div>
+                    <span class="progress-text">Progress: 85%</span>
+                </div>
+                <div class="initiative-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="initiative-icon">💧</div>
+                    <h3>Water Conservation</h3>
+                    <p>Construction of water recycling system</p>
+                    <div class="progress-bar" style="width: 70%"></div>
+                    <span class="progress-text">Progress: 70%</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-info">
+                <h3>Contact Us</h3>
+                <p>📍 Address: No. 888 Environmental Protection Avenue, Pudong New Area, Shanghai</p>
+                <p>📞 Phone: 021-88888888</p>
+                <p>📧 Email: contact@greenerbake.com</p>
+            </div>
+            <div class="footer-copyright">
+                <p>© 2024 Greener Bake. All Rights Reserved</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="../static/js/main.js"></script>
+</body>
+</html> 

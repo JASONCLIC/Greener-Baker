@@ -1,0 +1,216 @@
+{% extends "manager/base.html" %}
+
+{% block title %}Store Manager Dashboard - Greener Bake{% endblock %}
+
+{% block manager_content %}
+<div class="dashboard-container">
+    <header class="dashboard-header">
+        <h2>{{ store.name }} - Dashboard</h2>
+        <p class="store-address">{{ store.address }}</p>
+    </header>
+
+    <div class="dashboard-grid">
+        <!-- 设备状态卡片 -->
+        <div class="dashboard-card">
+            <h3>Device Status</h3>
+            <div class="device-stats">
+                <div class="stat-item">
+                    <span class="stat-value">{{ devices|length }}</span>
+                    <span class="stat-label">Total Devices</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">{{ devices|selectattr('status', 'equalto', 'active')|list|length }}</span>
+                    <span class="stat-label">Running</span>
+                </div>
+            </div>
+            <div class="device-list">
+                {% for device in devices %}
+                <div class="device-item {{ device.status }}">
+                    <span class="device-name">{{ device.name }}</span>
+                    <span class="device-status">{{ 'Running' if device.status == 'active' else 'Stopped' }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- 快速操作卡片 -->
+        <div class="dashboard-card">
+            <h3>Quick Actions</h3>
+            <div class="quick-actions">
+                <a href="{{ url_for('manager_energy') }}" class="action-btn">
+                    <span class="icon">⚡</span>
+                    <span>Energy Monitoring</span>
+                </a>
+                <a href="{{ url_for('manager_inventory') }}" class="action-btn">
+                    <span class="icon">📦</span>
+                    <span>Inventory Management</span>
+                </a>
+                <a href="{{ url_for('manager_devices') }}" class="action-btn">
+                    <span class="icon">🔌</span>
+                    <span>Device Management</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+{{ super() }}
+<style>
+    .dashboard-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem;
+    }
+
+    .dashboard-header {
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .dashboard-header h2 {
+        margin: 0;
+        color: #2c3e50;
+        font-size: 1.8rem;
+    }
+
+    .store-address {
+        color: #7f8c8d;
+        margin: 0.5rem 0 0 0;
+        font-size: 1rem;
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2rem;
+    }
+
+    .dashboard-card {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .dashboard-card h3 {
+        margin: 0 0 1.5rem 0;
+        color: #2c3e50;
+        font-size: 1.2rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #ecf0f1;
+    }
+
+    .device-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .stat-item {
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .stat-value {
+        display: block;
+        font-size: 2rem;
+        font-weight: bold;
+        color: #27ae60;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+    }
+
+    .device-list {
+        margin-top: 1rem;
+    }
+
+    .device-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem;
+        border-bottom: 1px solid #ecf0f1;
+    }
+
+    .device-item:last-child {
+        border-bottom: none;
+    }
+
+    .device-name {
+        color: #2c3e50;
+        font-weight: 500;
+    }
+
+    .device-status {
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.85rem;
+        background: #f1f1f1;
+        color: #7f8c8d;
+    }
+
+    .device-item.active .device-status {
+        background: #e1f5e1;
+        color: #27ae60;
+    }
+
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 1rem;
+    }
+
+    .action-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1.5rem 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #2c3e50;
+        transition: all 0.3s ease;
+    }
+
+    .action-btn:hover {
+        background: #e9ecef;
+        transform: translateY(-2px);
+    }
+
+    .action-btn .icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .action-btn span:not(.icon) {
+        font-size: 0.9rem;
+        text-align: center;
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .device-stats {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .quick-actions {
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        }
+    }
+</style>
+{% endblock %} 

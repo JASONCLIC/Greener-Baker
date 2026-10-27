@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}{{ paper.title }} - Greener Bake{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/resource.css') }}">
+{% endblock %}
+
+{% block content %}
+<main class="article-main">
+    <div class="container">
+        <div class="article-header">
+            <a href="{{ url_for('resource_center') }}" class="back-link">← Back to Resource Center</a>
+            <div class="article-icon">
+                <img src="{{ url_for('static', filename='images/icons/whitepaper.png') }}" alt="White Paper Icon">
+            </div>
+            <h1>{{ paper.title }}</h1>
+            <div class="article-meta">
+                <span>Published Date: {{ paper.publish_date }}</span>
+                <span>Author: {{ paper.author }}</span>
+            </div>
+        </div>
+
+        <div class="article-content">
+            <div class="introduction">
+                <h2>Introduction</h2>
+                <div class="content-block">
+                    As global attention to environmental protection and sustainable development continues to grow, the baking industry faces both opportunities and challenges for transformation. How to reduce energy consumption, lower carbon footprint, and optimize resource utilization while ensuring product quality and business benefits has become an urgent issue for many baking enterprises. This paper will explore environmental practices in industrial baking, providing a comprehensive guide to green transformation from raw material selection to production processes, helping baking enterprises achieve sustainable development goals.
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h2>1. Choosing Green Raw Materials: Reducing Environmental Impact from the Source</h2>
+                <div class="content-block">
+                    <p>The first step in green baking is selecting sustainable raw materials. In recent years, more and more baking enterprises have begun to focus on the traceability and environmental attributes of raw materials. When selecting basic ingredients such as flour, sugar, and yeast, consider the following aspects:</p>
+                    <ul>
+                        <li><strong>Organic Ingredients:</strong> Prioritize organically certified flour, sugar, and other raw materials, which use fewer fertilizers and pesticides in production, resulting in less pollution to soil and water sources.</li>
+                        <li><strong>Local Sourcing:</strong> Reduce carbon emissions from long-distance transportation by sourcing locally grown raw materials while supporting local agricultural development.</li>
+                        <li><strong>Sustainable Packaging:</strong> Choose biodegradable or recyclable packaging materials, reduce single-use plastics, and promote the adoption of eco-friendly packaging.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h2>2. Energy Management: Reducing Production Energy Consumption, Optimizing Baking Processes</h2>
+                <div class="content-block">
+                    <p>Energy consumption is one of the main environmental burdens in the baking production process. Through efficient energy management, baking enterprises can not only reduce energy costs but also significantly lower carbon emissions:</p>
+                    <ul>
+                        <li><strong>Energy Efficiency Optimization:</strong> Adopt efficient baking equipment and conduct regular maintenance to ensure optimal operation. Smart temperature control systems can automatically adjust baking parameters based on product requirements.</li>
+                        <li><strong>Renewable Energy:</strong> Introduce solar or wind energy systems as supplementary energy sources to reduce reliance on traditional electricity.</li>
+                        <li><strong>Smart Standby Control:</strong> Automatically detect and shut down idle equipment to avoid standby energy consumption.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h2>3. Water Resource Management: Conserving Water, Reducing Waste</h2>
+                <div class="content-block">
+                    <p>Water is an essential resource in baking production, but excessive use or waste can burden the environment. To better manage water resources, baking enterprises can take the following measures:</p>
+                    <ul>
+                        <li><strong>Water-Saving Equipment:</strong> Use water-saving nozzles, low-flow pipelines, and other equipment to reduce overall water consumption.</li>
+                        <li><strong>Water Recycling System:</strong> Treat and reuse wastewater from cleaning processes for rinsing or cooling.</li>
+                        <li><strong>Optimize Cleaning Processes:</strong> Use high-pressure, low-flow systems or dry cleaning methods to reduce water consumption during cleaning.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h2>4. Waste Management: Reducing Waste Generation, Achieving Circular Utilization</h2>
+                <div class="content-block">
+                    <ul>
+                        <li><strong>Food Recovery:</strong> Donate unsold but still within shelf-life products to communities or use them for animal feed production.</li>
+                        <li><strong>Organic Composting:</strong> Convert bread crumbs, food scraps, and other non-reusable materials into agricultural fertilizer through organic composting systems.</li>
+                        <li><strong>Classification Processing:</strong> Establish clear classification labels and training to improve employees' accuracy in waste sorting.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h2>5. Green Marketing and Consumer Transparency: Enhancing Brand Environmental Image</h2>
+                <div class="content-block">
+                    <ul>
+                        <li><strong>Carbon Footprint Labeling:</strong> Display product carbon emission information and allow consumers to view the complete carbon footprint path through QR codes.</li>
+                        <li><strong>Green Certification:</strong> Apply for authoritative labels such as green food and organic certification to enhance consumer trust.</li>
+                        <li><strong>Environmental Communication:</strong> Share the company's green story through official websites and social media to enhance brand image and consumer resonance.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="conclusion">
+                <h2>Conclusion</h2>
+                <div class="content-block">
+                    Green transformation is not only the baking industry's responsibility in addressing environmental challenges but also an opportunity for enterprises to enhance competitiveness. By reasonably selecting raw materials, optimizing energy and water resource management, effectively reducing waste generation, and strengthening consumers' environmental awareness, baking enterprises can achieve sustainable development while earning market respect and trust. We believe that every small green change will converge into a force driving the sustainable development of the entire industry. Let us work together to strive for a greener and healthier baking industry!
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

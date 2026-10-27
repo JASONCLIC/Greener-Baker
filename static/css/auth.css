@@ -1,0 +1,198 @@
+/* 粒子背景 */
+#particles-js {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    z-index: -1;
+    top: 0;
+    left: 0;
+}
+
+.auth-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    position: relative;
+    min-height: calc(100vh - 70px);
+    display: flex;
+    align-items: center;
+}
+
+.auth-card {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    backdrop-filter: blur(8px);
+    width: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.auth-logo {
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.auth-logo img {
+    width: 120px;  /* 调整大小以适应你的logo */
+    height: auto;
+    display: inline-block;
+    animation: float 3s ease-in-out infinite;
+}
+
+.auth-form {
+    position: relative;
+    z-index: 2;
+}
+
+.auth-form .form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.auth-form input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.auth-form input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+.auth-button {
+    width: 100%;
+    padding: 1rem;
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-button:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+.auth-link {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.auth-link a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.alert-danger {
+    background-color: rgba(244, 67, 54, 0.1);
+    color: var(--danger);
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+/* 修改logo样式 */
+.logo {
+    position: relative;
+    z-index: 100;
+    padding: 15px 0;
+}
+
+.logo h1 {
+    margin: 0;
+    padding-left: 20px;
+    color: var(--primary-color);
+    font-size: 1.5rem;
+}
+
+/* 隐藏主导航栏，但保留logo */
+.main-header {
+    position: relative;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.95);
+}
+
+/* 调整导航菜单样式 */
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-menu a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav-menu a:hover,
+.nav-menu a.active {
+    color: var(--primary-color);
+}
+
+/* 确保导航容器样式正确 */
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 响应式调整 */
+@media (max-height: 600px) {
+    .auth-container {
+        padding: 2rem 1rem;
+    }
+    
+    .auth-card {
+        margin-top: 0;
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .auth-card {
+        padding: 1.5rem;
+    }
+    
+    .auth-logo img {
+        width: 100px;
+    }
+}
+
+/* 调整 auth-page 的背景 */
+.auth-page {
+    background: transparent;
+} 

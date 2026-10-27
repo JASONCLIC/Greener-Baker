@@ -1,0 +1,479 @@
+{% extends "manager/base.html" %}
+
+{% block title %}Product Management | Greener Bake{% endblock %}
+
+{% block manager_content %}
+<div class="manager-content">
+    <div class="manager-header">
+        <h1>Product Management</h1>
+    </div>
+
+    <div class="products-section">
+        <div class="products-header">
+            <h2 class="products-title">Products List</h2>
+            <button class="add-product-btn" onclick="showAddProductModal()">Add product</button>
+        </div>
+        <table class="sales-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Unit</th>
+                    <th>Raw Materials</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>{{ product.id }}</td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.unit }}</td>
+                    <td>
+                        {% if product.id in product_recipes %}
+                            {% for recipe in product_recipes[product.id] %}
+                                {{ recipe.amount }} {{ recipe.material.unit }} {{ recipe.material.name }}
+                                {% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            Unset
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="edit-btn" data-product-id="{{ product.id }}">Edit</button>
+                        <button class="delete-btn" data-product-id="{{ product.id }}">Delete</button>
+                        <button class="carbon-report-btn" data-product-id="{{ product.id }}">Generate Eco-report</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- 添加产品模态框 -->
+<div id="addProductModal" class="modal">
+    <div class="modal-content">
+        <h3>Add Product</h3>
+        <form id="productForm" method="POST" action="{{ url_for('manager_add_product') }}">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="unit">Unit</label>
+                <input type="text" id="unit" name="unit" value="each" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Raw Materials</label>
+                <div class="recipe-items">
+                    <div class="recipe-item">
+                        <div class="recipe-fields">
+                            <select name="material_id[]" class="material-select" required>
+                                <option value="">Select</option>
+                                {% for material in materials %}
+                                <option value="{{ material.id }}" data-unit="{{ material.unit }}">{{ material.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="amount-field">
+                                <input type="number" name="amount[]" placeholder="quantity" step="0.01" min="0.01" required>
+                                <span class="material-unit"></span>
+                            </div>
+                        </div>
+                        <button type="button" class="remove-recipe-btn">delete</button>
+                    </div>
+                </div>
+                <button type="button" id="addRecipeBtn" class="add-recipe-btn">Add Raw Materials</button>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="submit-btn">Submit</button>
+                <button type="button" class="cancel-btn" onclick="hideModal('addProductModal')">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 编辑产品模态框 -->
+<div id="editProductModal" class="modal">
+    <div class="modal-content">
+        <h3>Edit</h3>
+        <form id="editProductForm">
+            <input type="hidden" id="edit_product_id" name="edit_product_id">
+            <div class="form-group">
+                <label for="edit_name">Name</label>
+                <input type="text" id="edit_name" name="edit_name" required>
+            </div>
+            <div class="form-group">
+                <label for="edit_unit">Unit</label>
+                <input type="text" id="edit_unit" name="edit_unit" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Raw Materials</label>
+                <div id="edit_recipe_items" class="recipe-items">
+                    <!-- 将通过JavaScript动态添加 -->
+                </div>
+                <button type="button" id="editAddRecipeBtn" class="add-recipe-btn">Add Raw Materials</button>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="submit-btn" id="updateProductBtn">Update</button>
+                <button type="button" class="cancel-btn" onclick="hideModal('editProductModal')">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 碳足迹报告模态框 -->
+<div id="carbonReportModal" class="modal">
+    <div class="modal-content">
+        <h3>Generate Eco-Report</h3>
+        <form id="carbonReportForm">
+            <input type="hidden" id="carbon_product_id" name="carbon_product_id">
+            <div class="form-group">
+                <label for="product_quantity">Product Number</label>
+                <input type="number" id="product_quantity" name="product_quantity" min="1" value="100" required>
+                <span id="product_unit"></span>
+            </div>
+            <div class="form-group">
+                <label for="batch_date">Product Time</label>
+                <input type="date" id="batch_date" name="batch_date" required>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="submit-btn" id="generateReportBtn">Generate</button>
+                <button type="button" class="cancel-btn" onclick="hideModal('carbonReportModal')">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+{{ super() }}
+<script>
+// 材料选项HTML模板
+function getMaterialOptionsHtml() {
+    return `
+        <option value="">Select</option>
+        {% for material in materials %}
+        <option value="{{ material.id }}" data-unit="{{ material.unit }}">{{ material.name }}</option>
+        {% endfor %}
+    `;
+}
+
+// 新建配方项目HTML
+function getNewRecipeItemHtml() {
+    return `
+        <div class="recipe-item">
+            <div class="recipe-fields">
+                <select name="material_id[]" class="material-select" required>
+                    ${getMaterialOptionsHtml()}
+                </select>
+                <div class="amount-field">
+                    <input type="number" name="amount[]" placeholder="Quantity" step="0.01" min="0.01" required>
+                    <span class="material-unit"></span>
+                </div>
+            </div>
+            <button type="button" class="remove-recipe-btn">Delete</button>
+        </div>
+    `;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // 编辑按钮事件绑定
+    document.querySelectorAll('.edit-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const productId = this.getAttribute('data-product-id');
+            editProduct(productId);
+        });
+    });
+
+    // 删除按钮事件绑定
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const productId = this.getAttribute('data-product-id');
+            if (confirm('Are you sure to delete this product？')) {
+                deleteProduct(productId);
+            }
+        });
+    });
+
+    // 添加配方按钮 - 新建产品
+    document.getElementById('addRecipeBtn').addEventListener('click', function() {
+        const recipeItems = document.querySelector('#productForm .recipe-items');
+        recipeItems.insertAdjacentHTML('beforeend', getNewRecipeItemHtml());
+        
+        // 绑定新添加的元素事件
+        bindRecipeItemEvents(recipeItems.lastElementChild);
+    });
+    
+    // 添加配方按钮 - 编辑产品
+    document.getElementById('editAddRecipeBtn').addEventListener('click', function() {
+        const recipeItems = document.getElementById('edit_recipe_items');
+        recipeItems.insertAdjacentHTML('beforeend', getNewRecipeItemHtml());
+        
+        // 绑定新添加的元素事件
+        bindRecipeItemEvents(recipeItems.lastElementChild);
+    });
+
+    // 更新产品按钮事件
+    document.getElementById('updateProductBtn').addEventListener('click', function() {
+        const productId = document.getElementById('edit_product_id').value;
+        const name = document.getElementById('edit_name').value;
+        const unit = document.getElementById('edit_unit').value;
+        
+        if (!name) {
+            alert('Please enter the name of product');
+            return;
+        }
+        
+        // 获取配方数据
+        const recipes = [];
+        document.querySelectorAll('#edit_recipe_items .recipe-item').forEach(item => {
+            const materialId = item.querySelector('select[name="material_id[]"]').value;
+            const amount = item.querySelector('input[name="amount[]"]').value;
+            
+            if (materialId && amount && parseFloat(amount) > 0) {
+                recipes.push({
+                    material_id: materialId,
+                    amount: amount
+                });
+            }
+        });
+        
+        updateProduct(productId, { 
+            name, 
+            unit,
+            recipes
+        });
+    });
+    
+    // 生成碳足迹报告按钮事件绑定
+    document.querySelectorAll('.carbon-report-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const productId = this.getAttribute('data-product-id');
+            showCarbonReportModal(productId);
+        });
+    });
+
+    // 生成报告按钮事件
+    document.getElementById('generateReportBtn').addEventListener('click', function() {
+        const productId = document.getElementById('carbon_product_id').value;
+        const quantity = document.getElementById('product_quantity').value;
+        const batchDate = document.getElementById('batch_date').value;
+        
+        if (!productId || !quantity || !batchDate) {
+            alert('Must enter all data');
+            return;
+        }
+        
+        generateCarbonReport(productId, quantity, batchDate);
+    });
+    
+    // 设置默认日期为今天
+    document.getElementById('batch_date').valueAsDate = new Date();
+    
+    // 绑定第一个配方项的事件
+    bindRecipeItemEvents(document.querySelector('.recipe-item'));
+});
+
+// 绑定配方项目的事件
+function bindRecipeItemEvents(recipeItem) {
+    if (!recipeItem) return;
+    
+    // 绑定删除按钮
+    recipeItem.querySelector('.remove-recipe-btn').addEventListener('click', function() {
+        const recipeItems = this.closest('.recipe-items');
+        if (recipeItems.children.length > 1) {
+            this.closest('.recipe-item').remove();
+        } else {
+            alert('At least one material');
+        }
+    });
+    
+    // 绑定材料选择变化事件
+    recipeItem.querySelector('.material-select').addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const unitSpan = this.closest('.recipe-fields').querySelector('.material-unit');
+        
+        if (selectedOption && selectedOption.dataset.unit) {
+            unitSpan.textContent = selectedOption.dataset.unit;
+        } else {
+            unitSpan.textContent = '';
+        }
+    });
+}
+
+// 显示添加产品模态框
+function showAddProductModal() {
+    // 清空表单
+    document.getElementById('productForm').reset();
+    
+    // 确保至少有一个配方项
+    const recipeItems = document.querySelector('#productForm .recipe-items');
+    recipeItems.innerHTML = getNewRecipeItemHtml();
+    bindRecipeItemEvents(recipeItems.firstElementChild);
+    
+    showModal('addProductModal');
+}
+
+// 编辑产品
+function editProduct(productId) {
+    fetch(`/manager/products/${productId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('edit_product_id').value = data.product.id;
+                document.getElementById('edit_name').value = data.product.name;
+                document.getElementById('edit_unit').value = data.product.unit;
+                
+                // 设置配方
+                const recipeItems = document.getElementById('edit_recipe_items');
+                recipeItems.innerHTML = '';
+                
+                // 如果有配方则显示，否则添加一个空行
+                if (data.recipes && data.recipes.length > 0) {
+                    data.recipes.forEach(recipe => {
+                        const recipeItemHtml = getNewRecipeItemHtml();
+                        recipeItems.insertAdjacentHTML('beforeend', recipeItemHtml);
+                        
+                        const newItem = recipeItems.lastElementChild;
+                        const materialSelect = newItem.querySelector('select[name="material_id[]"]');
+                        const amountInput = newItem.querySelector('input[name="amount[]"]');
+                        const unitSpan = newItem.querySelector('.material-unit');
+                        
+                        materialSelect.value = recipe.material_id;
+                        amountInput.value = recipe.amount;
+                        unitSpan.textContent = recipe.material_unit;
+                        
+                        bindRecipeItemEvents(newItem);
+                    });
+                } else {
+                    recipeItems.insertAdjacentHTML('beforeend', getNewRecipeItemHtml());
+                    bindRecipeItemEvents(recipeItems.lastElementChild);
+                }
+                
+                showModal('editProductModal');
+            } else {
+                alert('Fail to get information of product: ' + data.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+// 更新产品
+function updateProduct(productId, formData) {
+    fetch(`/manager/products/update/${productId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Update successfully');
+            location.reload(); // 刷新页面
+        } else {
+            alert('Failed to update: ' + data.message);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+// 删除产品
+function deleteProduct(productId) {
+    fetch(`/manager/products/delete/${productId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Delete successfully');
+            location.reload(); // 刷新页面
+        } else {
+            alert('Failed to delete: ' + data.message);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+// 显示模态框
+function showModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'block';
+    }
+}
+
+// 隐藏模态框
+function hideModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// 显示碳足迹报告模态框
+function showCarbonReportModal(productId) {
+    fetch(`/manager/products/${productId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // 检查产品是否有配方
+                if (!data.recipes || data.recipes.length === 0) {
+                    alert('This product does not have formula information and cannot generate a carbon footprint report!');
+                    return;
+                }
+                
+                document.getElementById('carbon_product_id').value = data.product.id;
+                document.getElementById('product_unit').textContent = data.product.unit;
+                showModal('carbonReportModal');
+            } else {
+                alert('Failed to get information of product: ' + data.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+// 生成碳足迹报告
+function generateCarbonReport(productId, quantity, batchDate) {
+    fetch(`/manager/carbon-report/generate`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            product_id: productId,
+            quantity: quantity,
+            batch_date: batchDate
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            hideModal('carbonReportModal');
+            alert('Generated successfully');
+            
+            // 询问是否查看报告
+            if (confirm('Do you want to catch the new report?')) {
+                window.open(`/carbon-report/${data.report_id}`, '_blank');
+            }
+        } else {
+            alert('Failed to generate  report: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to generate  report. Please try again later');
+    });
+}
+</script>
+{% endblock %} 

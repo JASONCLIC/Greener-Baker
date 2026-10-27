@@ -1,0 +1,316 @@
+{% extends "manager/base.html" %}
+
+{% block title %}Smart Ingredient Procurement Prediction - Greener Bake{% endblock %}
+
+{% block styles %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+{% endblock %}
+
+{% block manager_content %}
+<div class="inventory-dashboard">
+    <header class="page-header">
+        <h2>Smart Ingredient Procurement Prediction</h2>
+    </header>
+
+    <!-- 库存概览 -->
+    <div class="inventory-overview">
+        <!-- 预测需求 -->
+        <div class="prediction-chart">
+            <h2>Next 3 Days Sales Prediction</h2>
+            <div id="predictionChart"></div>
+            <div class="prediction-footer">
+                <div class="prediction-tips">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Intelligent prediction based on sales records from the past 30 days</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 推荐采购方案 -->
+        <div class="recommendation-section">
+            <h2>Recommended Procurement Plan for Next 3 Days</h2>
+            <div class="content">
+                <div class="recommendation-header">
+                    <div class="info-card">
+                        <i class="fas fa-shopping-cart"></i>
+                        <div class="info-content">
+                            <span class="label">Estimated Total Cost</span>
+                            <span id="totalCost" class="value">¥0.00</span>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-leaf"></i>
+                        <div class="info-content">
+                            <span class="label">Estimated Carbon Emission</span>
+                            <span id="totalEmission" class="value">0.00kg</span>
+                        </div>
+                    </div>
+                </div>
+                <table class="recommendation-table">
+                    <thead>
+                        <tr>
+                            <th>Ingredient</th>
+                            <th>Recommended Quantity</th>
+                            <th>Estimated Cost</th>
+                            <th>Carbon Emission</th>
+                            <th>Recommended Supplier</th>
+                        </tr>
+                    </thead>
+                    <tbody id="procurementTableBody">
+                        <!-- Procurement plan will be dynamically generated through JavaScript -->
+                    </tbody>
+                </table>
+                <div class="recommendation-footer">
+                    <div class="eco-tips">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Procurement recommendations are calculated based on historical sales data and carbon emission indicators</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 近期销售记录 -->
+    <div class="sales-records">
+        <div class="sales-records-header">
+            <h2 class="sales-records-title">Recent Sales Records</h2>
+            <button class="add-sales-btn" onclick="showAddSalesModal()">Add Sales Data</button>
+        </div>
+        <table class="sales-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in sales_records %}
+                <tr>
+                    <td>{{ record.date }}</td>
+                    <td>{{ record.product }}</td>
+                    <td>{{ record.quantity }}</td>
+                    <td>
+                        <button class="edit-btn" data-record-id="{{ record.id }}">Edit</button>
+                        <button class="delete-btn" data-record-id="{{ record.id }}">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- 添加销售数据模态框 -->
+<div id="addSalesModal" class="modal">
+    <div class="modal-content">
+        <h3>Add Sales Data</h3>
+        <form id="salesForm" method="POST" action="{{ url_for('manager_add_sales') }}">
+            <div class="form-group">
+                <label for="sale_date">Sales Date</label>
+                <input type="date" id="sale_date" name="sale_date" required>
+            </div>
+            <div class="form-group">
+                <label for="product">Product Type</label>
+                <select id="product" name="product" required>
+                    {% for product in products %}
+                    <option value="{{ product.id }}">{{ product.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="quantity">Sales Quantity</label>
+                <input type="number" id="quantity" name="quantity" required min="1">
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="submit-btn">Submit</button>
+                <button type="button" class="cancel-btn" onclick="hideModal('addSalesModal')">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 编辑销售数据模态框 -->
+<div id="editSalesModal" class="modal">
+    <div class="modal-content">
+        <h3>Edit Sales Data</h3>
+        <form id="editSalesForm">
+            <input type="hidden" id="edit_record_id" name="edit_record_id">
+            <div class="form-group">
+                <label for="edit_sale_date">Sales Date</label>
+                <input type="date" id="edit_sale_date" name="edit_sale_date" required>
+            </div>
+            <div class="form-group">
+                <label for="edit_product">Product Type</label>
+                <select id="edit_product" name="edit_product" required>
+                    {% for product in products %}
+                    <option value="{{ product.id }}">{{ product.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="edit_quantity">Sales Quantity</label>
+                <input type="number" id="edit_quantity" name="edit_quantity" required min="1">
+            </div>
+            <div class="form-actions">
+                <button type="button" class="submit-btn" id="updateSalesBtn">Update</button>
+                <button type="button" class="cancel-btn" onclick="hideModal('editSalesModal')">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ super() }}
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 初始化图表
+    var chartDom = document.getElementById('predictionChart');
+    var myChart = echarts.init(chartDom);
+
+    // 设置基本选项
+    var option = {
+        title: {
+            text: 'Next 3 Days Ingredient Demand Prediction',
+            left: 'center'
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'shadow'
+            }
+        },
+        legend: {
+            data: ['Sample Data'],
+            top: 30
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'category',
+            data: ['Day 1', 'Day 2', 'Day 3']
+        },
+        yAxis: {
+            type: 'value',
+            name: 'Demand'
+        },
+        series: [{
+            name: 'Sample Data',
+            type: 'bar',
+            data: [10, 15, 12]
+        }]
+    };
+
+    // 设置图表
+    myChart.setOption(option);
+
+    // 获取真实数据
+    fetch('/api/manager/inventory-prediction')
+        .then(response => response.json())
+        .then(data => {
+            if (!data || data.length === 0) {
+                console.warn('Prediction data is empty');
+                return;
+            }
+
+            // 提取材料名称
+            var materialNames = data.map(function(item) {
+                return item.material;
+            });
+
+            // 准备系列数据
+            var seriesData = data.map(function(item) {
+                return {
+                    name: item.material,
+                    type: 'bar',
+                    data: item.predictions
+                };
+            });
+
+            // 更新图表
+            myChart.setOption({
+                legend: {
+                    data: materialNames
+                },
+                series: seriesData
+            });
+        })
+        .catch(error => {
+            console.error('Failed to get prediction data:', error);
+        });
+
+    // 绑定编辑按钮事件
+    document.querySelectorAll('.edit-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const recordId = this.getAttribute('data-record-id');
+            // 打开编辑模态框并填充数据
+            fetch(`/manager/sales/${recordId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const record = data.record;
+                        document.getElementById('edit_record_id').value = record.id;
+                        document.getElementById('edit_sale_date').value = record.sale_date;
+                        document.getElementById('edit_product').value = record.product_id;
+                        document.getElementById('edit_quantity').value = record.quantity;
+                        showModal('editSalesModal');
+                    } else {
+                        alert('Failed to get sales record: ' + data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    });
+
+    // 绑定删除按钮事件
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const recordId = this.getAttribute('data-record-id');
+            if (confirm('Are you sure you want to delete this record?')) {
+                fetch(`/manager/sales/delete/${recordId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Record deleted successfully');
+                        location.reload(); // 刷新页面
+                    } else {
+                        alert('Failed to delete: ' + data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        });
+    });
+});
+
+// 显示模态框
+function showModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'block';
+    }
+}
+
+// 隐藏模态框
+function hideModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+</script>
+<script src="{{ url_for('static', filename='js/manager/inventory.js') }}"></script>
+{% endblock %} 

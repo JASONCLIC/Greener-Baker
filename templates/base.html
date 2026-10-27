@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Greener Bake{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/loading.css') }}">
+    {% block extra_css %}{% endblock %}
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script>
+        // 记录页面开始加载的时间
+        const pageLoadStart = performance.now();
+        // 设置最小加载时间阈值（毫秒）
+        const MIN_LOAD_TIME = 1000;
+    </script>
+</head>
+<body {% block body_class %}{% endblock %}>
+    <!-- 加载动画 -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-container">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Greener Bake Logo" class="loading-logo">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Loading...</div>
+        </div>
+    </div>
+
+    <header class="main-header">
+        <nav class="nav-container">
+            <div class="logo">
+                <h1>Greener Bake</h1>
+            </div>
+            {% block navigation %}
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('index') }}" {% if request.endpoint == 'index' %}class="active"{% endif %}>Main</a></li>
+                <li><a href="{{ url_for('about') }}" {% if request.endpoint == 'about' %}class="active"{% endif %}>About</a></li>
+                <li><a href="{{ url_for('resource_center') }}" {% if request.endpoint == 'resource_center' %}class="active"{% endif %}>Resource Center</a></li>
+                <li><a href="{{ url_for('carbon_footprint') }}" {% if request.endpoint == 'carbon_footprint' %}class="active"{% endif %}>Eco-Report</a></li>
+                <li><a href="{{ url_for('login') }}" {% if request.endpoint == 'login' %}class="active"{% endif %}>Login</a></li>
+            </ul>
+            {% endblock %}
+        </nav>
+    </header>
+
+    {% block content %}{% endblock %}
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    {% block extra_js %}{% endblock %}
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    <script>
+        // 页面加载完成后处理加载动画
+        window.addEventListener('load', function() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadTime = performance.now() - pageLoadStart;
+            
+            // 如果加载时间超过阈值，显示加载动画
+            if (loadTime > MIN_LOAD_TIME) {
+                loadingOverlay.style.display = 'flex';
+                // 确保动画显示足够长的时间
+                setTimeout(() => {
+                    loadingOverlay.classList.add('fade-out');
+                    setTimeout(() => {
+                        loadingOverlay.style.display = 'none';
+                    }, 500);
+                }, 1000); // 至少显示1秒
+            } else {
+                // 如果加载很快，直接隐藏加载动画
+                loadingOverlay.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html> 

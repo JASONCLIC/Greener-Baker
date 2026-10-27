@@ -1,0 +1,72 @@
+{% extends "admin/base.html" %}
+
+{% block title %}User Management - Greener Bake{% endblock %}
+
+{% block admin_content %}
+<header class="admin-header">
+    <h2>User Management</h2>
+    <button class="add-user-btn" onclick="showAddUserModal()">Add User</button>
+</header>
+
+<div class="users-table-container">
+    <table class="users-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Registration Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.role }}</td>
+                <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                <td>
+                    <button class="edit-btn" onclick="showEditModal({{ user.id }})">Edit</button>
+                    <button class="delete-btn" onclick="confirmDelete({{ user.id }})">Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- 添加用户模态框 -->
+<div id="addUserModal" class="modal">
+    <div class="modal-content">
+        <h3>Add User</h3>
+        <form method="POST" action="{{ url_for('admin_add_user') }}">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="role">Role</label>
+                <select id="role" name="role" required>
+                    <option value="USER">Regular User</option>
+                    <option value="ADMIN">Administrator</option>
+                </select>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="submit-btn">Add</button>
+                <button type="button" class="cancel-btn" onclick="hideModal('addUserModal')">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 

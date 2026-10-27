@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Environmental Reports - Greener Bake</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+<body>
+    <header class="main-header">
+        <nav class="nav-container">
+            <div class="logo">
+                <h1>Greener Bake</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('production') }}">Production</a></li>
+                <li><a href="{{ url_for('sustainability') }}">Sustainability</a></li>
+                <li><a href="{{ url_for('reports') }}" class="active">Reports</a></li>
+                <li><a href="{{ url_for('login') }}">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero-section">
+            <div class="hero-content" data-aos="fade-up">
+                <h1>Environmental Reports Center</h1>
+                <p>Transparent and public environmental responsibility reports</p>
+            </div>
+        </section>
+
+        <section class="reports-section">
+            <h2 data-aos="fade-up">Environmental Reports</h2>
+            <div class="reports-grid">
+                <div class="report-card" data-aos="fade-up" data-aos-delay="100">
+                    <h3>Monthly Environmental Reports</h3>
+                    <div class="report-list">
+                        <div class="report-item" data-aos="fade-right" data-aos-delay="150">
+                            <span>March 2024 Report</span>
+                            <button class="download-btn">Download PDF</button>
+                        </div>
+                        <div class="report-item" data-aos="fade-right" data-aos-delay="200">
+                            <span>February 2024 Report</span>
+                            <button class="download-btn">Download PDF</button>
+                        </div>
+                        <div class="report-item" data-aos="fade-right" data-aos-delay="250">
+                            <span>January 2024 Report</span>
+                            <button class="download-btn">Download PDF</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="report-card" data-aos="fade-up" data-aos-delay="200">
+                    <h3>Environmental Certifications</h3>
+                    <div class="certification-list">
+                        <div class="certification-item" data-aos="zoom-in" data-aos-delay="150">
+                            <span>ISO 14001 Environmental Management System Certification</span>
+                            <div class="status valid">Valid</div>
+                        </div>
+                        <div class="certification-item" data-aos="zoom-in" data-aos-delay="200">
+                            <span>Green Food Certification</span>
+                            <div class="status valid">Valid</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="achievements-section">
+            <h2 data-aos="fade-up">Environmental Achievements</h2>
+            <div class="achievements-grid">
+                <div class="achievement-card" data-aos="flip-left" data-aos-delay="100">
+                    <div class="achievement-icon">🏆</div>
+                    <h3>2023 Green Enterprise of the Year</h3>
+                    <p>Awarded by Shanghai Environmental Protection Bureau</p>
+                </div>
+                <div class="achievement-card" data-aos="flip-left" data-aos-delay="200">
+                    <div class="achievement-icon">🌟</div>
+                    <h3>Energy Conservation and Emission Reduction Advanced Unit</h3>
+                    <p>Certified by Ministry of Industry and Information Technology</p>
+                </div>
+                <div class="achievement-card" data-aos="flip-left" data-aos-delay="300">
+                    <div class="achievement-icon">📊</div>
+                    <h3>Carbon Footprint Certification</h3>
+                    <p>Certified by International Environmental Organization</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-info">
+                <h3>Contact Us</h3>
+                <p>📍 Address: No. 888 Environmental Protection Avenue, Pudong New Area, Shanghai</p>
+                <p>📞 Phone: 021-88888888</p>
+                <p>📧 Email: contact@greenerbake.com</p>
+            </div>
+            <div class="footer-copyright">
+                <p>© 2024 Greener Bake. All Rights Reserved</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="../static/js/main.js"></script>
+</body>
+</html> 

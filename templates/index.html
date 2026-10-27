@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Greener Bake - sustainable development system{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+{% endblock %}
+
+{% block content %}
+<main>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-video">
+            <video autoplay muted loop playsinline>
+                <source src="{{ url_for('static', filename='videos/hero-bg.mp4') }}" type="video/mp4">
+            </video>
+            <div class="overlay"></div>
+        </div>
+        <div class="hero-content">
+            <h1>Leading Green Innovation in Bakery Industry</h1>
+            <p>Committed to sustainable development, setting new standards for eco-friendly baking</p>
+            <a href="{{ url_for('about') }}" class="cta-button">Learn More</a>
+        </div>
+    </section>
+
+    <!-- Real-time Monitoring Dashboard -->
+    <section class="dashboard-section">
+        <div class="container">
+            <h2 data-aos="fade-up">Real-time Monitoring Dashboard</h2>
+            <div class="metrics-container">
+                <!-- Material Usage -->
+                <div class="metric-card material-usage" data-aos="fade-up">
+                    <div class="metric-icon">📊</div>
+                    <div class="metric-content">
+                        <h3>Material Utilization</h3>
+                        <div class="metric-number">90<span class="unit">%</span></div>
+                        <p>Efficient material usage, reducing waste</p>
+                    </div>
+                </div>
+
+                <!-- Energy Consumption -->
+                <div class="metric-card energy-consumption" data-aos="fade-up" data-aos-delay="100">
+                    <div class="metric-icon">⚡</div>
+                    <div class="metric-content">
+                        <h3>Energy Savings</h3>
+                        <div class="metric-number">33<span class="unit">%</span></div>
+                        <p>Reduced energy consumption vs last year</p>
+                    </div>
+                </div>
+
+                <!-- Waste Recycling -->
+                <div class="metric-card waste-recycling" data-aos="fade-up" data-aos-delay="200">
+                    <div class="metric-icon">♻️</div>
+                    <div class="metric-content">
+                        <h3>Waste Recycling</h3>
+                        <div class="metric-number">85<span class="unit">%</span></div>
+                        <p>Waste recycling and reuse rate</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section">
+        <div class="container">
+            <h2>About Greener Bake</h2>
+            <div class="about-content">
+                <div class="about-text" data-aos="fade-right">
+                    <p>Founded in 2020, Greener Bake is a modern bakery enterprise dedicated to sustainable development. We not only provide high-quality baked goods but also focus on environmental protection and resource conservation.</p>
+                    <ul class="achievements">
+                        <li><strong>40%</strong> Energy Savings</li>
+                        <li><strong>60+</strong> Eco-certified Products</li>
+                        <li><strong>90%</strong> Carbon Emission Reduction</li>
+                    </ul>
+                </div>
+                <div class="about-image" data-aos="fade-left">
+                    <img src="{{ url_for('static', filename='images/about-image.jpg') }}" alt="Green Bakery Factory">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container">
+            <h2 data-aos="fade-up">Contact Us</h2>
+            <div class="contact-info">
+                <div class="contact-item" data-aos="fade-up" data-aos-delay="100">
+                    <div class="icon">📍</div>
+                    <div class="info">
+                        <h3>Address</h3>
+                        <p>100, Ping Le Yuan, Beijing</p>
+                    </div>
+                </div>
+                <div class="contact-item" data-aos="fade-up" data-aos-delay="200">
+                    <div class="icon">📞</div>
+                    <div class="info">
+                        <h3>Phone</h3>
+                        <p>+86 13613417916</p>
+                    </div>
+                </div>
+                <div class="contact-item" data-aos="fade-up" data-aos-delay="300">
+                    <div class="icon">📧</div>
+                    <div class="info">
+                        <h3>Email</h3>
+                        <p>dy41928528@gmail.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

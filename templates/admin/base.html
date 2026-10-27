@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block body_class %}class="admin-body"{% endblock %}
+
+{% block navigation %}{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <aside class="admin-sidebar">
+        <div class="admin-logo">
+            <h1>Greener Bake</h1>
+            <p>Admin Console</p>
+        </div>
+        <nav class="admin-nav">
+            <ul>
+                <li><a href="{{ url_for('admin_dashboard') }}" {% if request.endpoint == 'admin_dashboard' %}class="active"{% endif %}>
+                    <span class="icon">📊</span>Overview
+                </a></li>
+                <li><a href="{{ url_for('admin_users') }}" {% if request.endpoint == 'admin_users' %}class="active"{% endif %}>
+                    <span class="icon">👥</span>User Management
+                </a></li>
+                <li><a href="{{ url_for('index') }}">
+                    <span class="icon">🏠</span>Back to Home
+                </a></li>
+                <li><a href="{{ url_for('logout') }}">
+                    <span class="icon">🚪</span>Logout
+                </a></li>
+            </ul>
+        </nav>
+    </aside>
+    <main class="admin-main">
+        {% block admin_content %}{% endblock %}
+    </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+{% endblock %} 

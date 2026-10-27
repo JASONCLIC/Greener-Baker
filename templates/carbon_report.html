@@ -1,0 +1,767 @@
+{% extends "base.html" %}
+
+{% block title %}Carbon Footprint Report - {{ report.product.name }}{% endblock %}
+
+{% block content %}
+<div class="report-container">
+
+    <!-- 水印 (仅打印时显示) -->
+    <div class="watermark">Green baking</div>
+    
+    <!-- 报告标题 -->
+    <div class="report-header">
+        <img src="{{ url_for('static', filename='images/eco-logo.png') }}" alt="Eco Logo">
+        <h1>Green Baking Carbon Footprint Report</h1>
+        <p>Transparent display of our environmental impact and continuous efforts to reduce carbon footprint, providing consumers with truly green bread</p>
+    </div>
+    
+    <!-- 基本信息（四宫格布局） -->
+    <div class="four-grid-container">
+        <h2 class="four-grid-title">Basic information</h2>
+        <div class="four-grid">
+            <div class="grid-item">
+                <div class="icon"><i class="fas fa-bread-slice"></i></div>
+                <div class="label">Product Name</div>
+                <div class="value">{{ report.product.name }}</div>
+            </div>
+            <div class="grid-item">
+                <div class="icon"><i class="fas fa-calendar-alt"></i></div>
+                <div class="label">Date of Manufacture</div>
+                <div class="value">{{ report.batch_date.strftime('%Y-%m-%d') }}</div>
+            </div>
+            <div class="grid-item">
+                <div class="icon"><i class="fas fa-cubes"></i></div>
+                <div class="label">Production Quantity</div>
+                <div class="value">{{ report.quantity }} {{ report.product.unit }}</div>
+            </div>
+            <div class="grid-item">
+                <div class="icon"><i class="fas fa-file-alt"></i></div>
+                <div class="label">Report Generation Date</div>
+                <div class="value">{{ report.created_at.strftime('%Y-%m-%d') }}</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 碳排放摘要（四宫格布局） -->
+    <div class="four-grid-container">
+        <h2 class="four-grid-title">Carbon Footprint Summary</h2>
+        <div class="four-grid">
+            <div class="grid-item">
+                <div class="icon eco-icon"><i class="fas fa-leaf"></i></div>
+                <div class="value">{{ report.materials_emission }}</div>
+                <div class="label">Carbon emissions from raw materials (kg CO₂)</div>
+            </div>
+            <div class="grid-item">
+                <div class="icon eco-icon"><i class="fas fa-industry"></i></div>
+                <div class="value">{{ report.production_emission }}</div>
+                <div class="label">Carbon emissions during the production process (kg CO₂)</div>
+            </div>
+            <div class="grid-item">
+                <div class="icon eco-icon"><i class="fas fa-globe-asia"></i></div>
+                <div class="value">{{ report.total_emission }}</div>
+                <div class="label">Total carbon emissions (kg CO₂)</div>
+            </div>
+            <div class="grid-item">
+                <div class="icon eco-icon"><i class="fas fa-balance-scale"></i></div>
+                <div class="value">{{ report.per_unit_emission }}</div>
+                <div class="label">Unit product carbon emissions (kg CO₂)</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 材料明细 -->
+    <div class="materials-section">
+        <h2>Details of Carbon Emissions from Raw Materials</h2>
+        <p>The various raw materials used in the production process of our products and their corresponding carbon emission information</p>
+        <div class="table-container">
+            <table class="materials-table">
+                <thead>
+                    <tr>
+                        <th>Raw material name</th>
+                        <th>Usage</th>
+                        <th>Carbon emission coefficient</th>
+                        <th>Carbon emissions (kg CO₂)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for material in materials %}
+                    <tr>
+                        <td>{{ material.name }}</td>
+                        <td>{{ material.amount }} {{ material.unit }}</td>
+                        <td>{{ material.emission_factor }} kg CO₂/{{ material.unit }}</td>
+                        <td>{{ material.total_emission }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- 二维码 -->
+    <div class="qr-section">
+        <p>Scan the QR code below to share this carbon footprint report<br>Environmentally friendly baking, tailored for you</p>
+        {% if report.qr_code_path %}
+        <img class="qr-code" src="{{ url_for('static', filename=report.qr_code_path) }}" alt="Carbon Footprint QR Code">
+        {% endif %}
+    </div>
+    
+    <!-- 操作按钮 -->
+    <div class="footer-actions">
+        {% if report.report_path %}
+        <a href="{{ url_for('download_carbon_report', report_id=report.id) }}" class="action-btn download-btn">
+            <i class="fas fa-download"></i> Download Report
+        </a>
+        {% endif %}
+        <a href="{{ url_for('carbon_footprint') }}" class="action-btn back-btn">
+            <i class="fas fa-arrow-left"></i> Back to List
+        </a>
+    </div>
+</div>
+
+<style>
+    :root {
+        --primary-color: #4CAF50;
+        --primary-dark: #388E3C;
+        --primary-light: #C8E6C9;
+        --accent-color: #00BCD4;
+        --text-primary: #212121;
+        --text-secondary: #757575;
+        --background-light: #f5f5f5;
+        --card-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        --transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body {
+        text-align: center;
+        font-family: 'Arial', sans-serif;
+        background-color: #f9f9f9;
+        color: var(--text-primary);
+        line-height: 1.6;
+    }
+
+    .report-container {
+        max-width: 90%;
+        margin: 40px auto;
+        background-color: #fff;
+        border-radius: 16px;
+        box-shadow: var(--card-shadow);
+        padding: 50px 30px;
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+        border: 1px solid rgba(76, 175, 80, 0.1);
+    }
+
+    /* 装饰元素 */
+    .report-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 6px;
+        background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+    }
+
+    /* 四宫格布局 */
+    .four-grid-container {
+        margin: 50px auto;
+        max-width: 900px;
+        position: relative;
+    }
+
+    .four-grid-title {
+        color: var(--primary-dark);
+        margin-bottom: 30px;
+        font-size: 1.9em;
+        position: relative;
+        padding-bottom: 15px;
+        text-align: center;
+    }
+
+    .four-grid-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 70px;
+        height: 3px;
+        background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+        border-radius: 3px;
+    }
+
+    .four-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: 25px;
+    }
+
+    .grid-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 30px 20px;
+        background-color: white;
+        border-radius: 16px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.07);
+        transition: var(--transition-normal);
+        border: 1px solid rgba(0,0,0,0.03);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .grid-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+        opacity: 0.7;
+    }
+
+    .grid-item:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+    }
+
+    .grid-item .icon {
+        font-size: 2.2em;
+        color: var(--primary-dark);
+        margin-bottom: 15px;
+        opacity: 0.8;
+    }
+
+    .grid-item .eco-icon {
+        font-size: 2.5em;
+        background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 20px;
+    }
+
+    .grid-item .label {
+        color: var(--text-secondary);
+        font-size: 1em;
+        margin-top: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-align: center;
+        line-height: 1.5;
+    }
+
+    .grid-item .value {
+        font-size: 2em;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin: 5px 0;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+    }
+
+    /* 打印样式 */
+    @media print {
+        body {
+            background: white;
+            font-size: 12pt;
+            text-align: center;
+        }
+
+        .report-container {
+            max-width: 100%;
+            margin: 0;
+            padding: 20px;
+            box-shadow: none;
+            border-radius: 0;
+            border: none;
+        }
+
+        .footer-actions,
+        nav,
+        header,
+        footer {
+            display: none !important;
+        }
+
+        .report-header img {
+            max-width: 100px;
+        }
+
+        .eco-badge {
+            display: none;
+        }
+
+        .four-grid-container {
+            break-inside: avoid;
+        }
+
+        .emission-chart {
+            break-before: page;
+            height: 300px !important;
+        }
+
+        .materials-section {
+            break-before: page;
+        }
+
+        .qr-section {
+            break-inside: avoid;
+        }
+
+        .watermark {
+            display: block;
+            position: fixed;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 4rem;
+            color: rgba(76, 175, 80, 0.07);
+            transform: rotate(-35deg) translateY(-50%);
+            z-index: -1;
+            letter-spacing: 1rem;
+            user-select: none;
+            pointer-events: none;
+        }
+    }
+
+    /* 打印按钮 */
+    .print-button {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: var(--primary-light);
+        color: var(--primary-dark);
+        border: none;
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: var(--transition-normal);
+        box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+        z-index: 2;
+        font-size: 1.2em;
+    }
+
+    .print-button:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: translateY(-3px) rotate(5deg);
+        box-shadow: 0 5px 18px rgba(0,0,0,0.2);
+    }
+
+    /* 绿色认证角标 */
+    .eco-badge {
+        position: absolute;
+        top: 20px;
+        right: -35px;
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        color: white;
+        font-size: 0.85rem;
+        padding: 8px 40px;
+        transform: rotate(45deg);
+        font-weight: 500;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        z-index: 1;
+        letter-spacing: 1px;
+    }
+
+    /* 报告标题 */
+    .report-header {
+        text-align: center;
+        margin-bottom: 50px;
+        padding-bottom: 30px;
+        border-bottom: 2px solid var(--primary-light);
+        position: relative;
+    }
+
+    .report-header::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 120px;
+        height: 3px;
+        background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+        border-radius: 3px;
+    }
+
+    .report-header h1 {
+        color: var(--primary-dark);
+        margin-bottom: 20px;
+        font-size: 2.4em;
+        font-weight: 600;
+        position: relative;
+        display: inline-block;
+    }
+
+    .report-header h1::before,
+    .report-header h1::after {
+        content: '•';
+        color: var(--accent-color);
+        font-size: 0.8em;
+        position: relative;
+        top: -5px;
+        margin: 0 10px;
+        opacity: 0.6;
+    }
+
+    .report-header img {
+        width: 100px;
+        margin-bottom: 25px;
+        filter: drop-shadow(0 3px 8px rgba(0,0,0,0.15));
+        transition: var(--transition-normal);
+    }
+
+    .report-header img:hover {
+        transform: scale(1.05) rotate(5deg);
+    }
+
+    .report-header p {
+        color: var(--text-secondary);
+        max-width: 700px;
+        margin: 0 auto;
+        line-height: 1.8;
+        font-size: 1.05em;
+    }
+
+    /* 图表区域 */
+    .emission-chart {
+        margin: 50px auto;
+        height: 400px;
+        background-color: white;
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+        max-width: 90%;
+        text-align: center;
+        border: 1px solid rgba(0,0,0,0.03);
+    }
+
+    /* 材料明细部分 */
+    .materials-section {
+        margin: 50px auto;
+        max-width: 90%;
+        text-align: center;
+    }
+
+    .materials-section h2 {
+        color: var(--primary-dark);
+        margin-bottom: 25px;
+        font-size: 1.9em;
+        position: relative;
+        padding-bottom: 15px;
+        text-align: center;
+    }
+
+    .materials-section h2::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 70px;
+        height: 3px;
+        background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+        border-radius: 3px;
+    }
+
+    .materials-section p {
+        text-align: center;
+        margin-bottom: 30px;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+        color: var(--text-secondary);
+        font-size: 1.05em;
+        line-height: 1.8;
+    }
+
+    /* 表格样式 */
+    .table-container {
+        width: 100%;
+        overflow-x: auto;
+        margin: 0 auto;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        border-radius: 16px;
+        background: white;
+    }
+
+    .materials-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+    .materials-table th {
+        background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+        color: white;
+        padding: 18px 15px;
+        text-align: center;
+        font-weight: 500;
+        font-size: 1.05em;
+    }
+
+    .materials-table th {
+        letter-spacing: 0.5px;
+    }
+
+    .materials-table th:first-child {
+        border-top-left-radius: 16px;
+    }
+
+    .materials-table th:last-child {
+        border-top-right-radius: 16px;
+    }
+
+    .materials-table td {
+        padding: 16px 15px;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        color: var(--text-primary);
+        text-align: center;
+        transition: var(--transition-normal);
+    }
+
+    .materials-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .materials-table tr:last-child td:first-child {
+        border-bottom-left-radius: 16px;
+    }
+
+    .materials-table tr:last-child td:last-child {
+        border-bottom-right-radius: 16px;
+    }
+
+    .materials-table tr:nth-child(even) {
+        background-color: rgba(0,0,0,0.02);
+    }
+
+    .materials-table tr:hover {
+        background-color: rgba(76, 175, 80, 0.07);
+    }
+
+    .materials-table tr:hover td {
+        color: var(--primary-dark);
+    }
+
+    /* 二维码部分 */
+    .qr-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 60px auto 0;
+        padding-top: 50px;
+        border-top: 2px dashed rgba(0,0,0,0.07);
+        max-width: 90%;
+        text-align: center;
+    }
+
+    .qr-section p {
+        margin-bottom: 25px;
+        color: var(--text-secondary);
+        text-align: center;
+        max-width: 600px;
+        line-height: 1.8;
+    }
+
+    .qr-code {
+        width: 180px;
+        height: 180px;
+        padding: 15px;
+        background-color: white;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        border-radius: 10px;
+        transition: var(--transition-normal);
+        border: 1px solid rgba(0,0,0,0.03);
+    }
+
+    .qr-code:hover {
+        transform: scale(1.08) rotate(2deg);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    /* 底部操作按钮 */
+    .footer-actions {
+        display: flex;
+        justify-content: center;
+        gap: 25px;
+        margin-top: 60px;
+    }
+
+    .action-btn {
+        padding: 14px 35px;
+        border-radius: 40px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition-normal);
+        text-align: center;
+        min-width: 180px;
+        letter-spacing: 0.8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-size: 1.05em;
+    }
+
+    .download-btn {
+        background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+        color: white;
+        box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+    }
+
+    .download-btn:hover {
+        background: linear-gradient(to right, var(--primary-dark), #2E7D32);
+        box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
+        transform: translateY(-3px);
+    }
+
+    .back-btn {
+        background: linear-gradient(to right, var(--accent-color), #0097A7);
+        color: white;
+        box-shadow: 0 5px 15px rgba(0, 188, 212, 0.3);
+    }
+
+    .back-btn:hover {
+        background: linear-gradient(to right, #0097A7, #00838F);
+        box-shadow: 0 8px 20px rgba(0, 188, 212, 0.4);
+        transform: translateY(-3px);
+    }
+
+    .watermark {
+        display: none;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+        .report-container {
+            padding: 30px 20px;
+            margin: 20px auto;
+            max-width: 95%;
+        }
+
+        .four-grid {
+            grid-template-columns: 1fr;
+            grid-template-rows: auto;
+        }
+
+        .emission-chart,
+        .materials-section,
+        .qr-section {
+            max-width: 100%;
+        }
+
+        .materials-table {
+            font-size: 0.9em;
+        }
+
+        .footer-actions {
+            flex-direction: column;
+        }
+
+        .action-btn {
+            width: 100%;
+        }
+
+        .report-header h1 {
+            font-size: 1.8em;
+        }
+
+        .report-header p {
+            font-size: 0.95em;
+        }
+    }
+</style>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // 添加绿色认证标签（原HTML中漏掉了）
+        const ecoBadge = document.createElement('div');
+        ecoBadge.className = 'eco-badge';
+        ecoBadge.textContent = 'Green certification';
+        reportContainer.appendChild(ecoBadge);
+        
+        // 绘制图表
+        const ctx = document.getElementById('emissionChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Carbon emissions from raw materials', 'Carbon emissions during the production process'],
+                datasets: [{
+                    data: [{{ report.materials_emission }}, {{ report.production_emission }}],
+                    backgroundColor: [
+                        '#4CAF50',
+                        '#00BCD4'
+                    ],
+                    borderColor: [
+                        '#fff',
+                        '#fff'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            font: {
+                                size: 14
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Distribution of carbon emission sources',
+                        font: {
+                            size: 18,
+                            weight: 'bold'
+                        },
+                        padding: {
+                            top: 10,
+                            bottom: 20
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${value} kg CO₂ (${percentage}%)`;
+                            }
+                        }
+                    }
+                },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true,
+                    duration: 1500,
+                    easing: 'easeOutQuart'
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

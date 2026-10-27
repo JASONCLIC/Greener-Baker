@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/manager.css') }}">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}
+
+{% block body_class %}class="manager-body"{% endblock %}
+
+{% block navigation %}{% endblock %}
+
+{% block content %}
+<div class="manager-container">
+    <aside class="manager-sidebar">
+        <div class="manager-logo">
+            <h1>Greener Bake</h1>
+            <p>{{ store.name }}</p>
+            <p class="manager-role">Store Manager</p>
+        </div>
+        <nav class="manager-nav">
+            <ul>
+                <li><a href="{{ url_for('manager_dashboard') }}" {% if request.endpoint == 'manager_dashboard' %}class="active"{% endif %}>
+                    <span class="icon">📊</span>Overview
+                </a></li>
+                <li><a href="{{ url_for('manager_energy') }}" {% if request.endpoint == 'manager_energy' %}class="active"{% endif %}>
+                    <span class="icon">⚡</span>Energy Monitoring
+                </a></li>
+                <li><a href="{{ url_for('manager_devices') }}" {% if request.endpoint == 'manager_devices' %}class="active"{% endif %}>
+                    <span class="icon">🔌</span>Device Management
+                </a></li>
+                <li><a href="{{ url_for('manager_inventory') }}" {% if request.endpoint == 'manager_inventory' %}class="active"{% endif %}>
+                    <span class="icon">📦</span>Inventory Prediction
+                </a></li>
+                <li><a href="{{ url_for('manager_products') }}" {% if request.endpoint == 'manager_products' %}class="active"{% endif %}>
+                    <span class="icon">🍞</span>Product Management
+                </a></li>
+                <li><a href="{{ url_for('index') }}">
+                    <span class="icon">🏠</span>Back to Home
+                </a></li>
+                <li><a href="{{ url_for('logout') }}">
+                    <span class="icon">🚪</span>Logout
+                </a></li>
+            </ul>
+        </nav>
+    </aside>
+    <main class="manager-main">
+        {% block manager_content %}{% endblock %}
+    </main>
+</div>
+{% endblock %} 
